@@ -1,0 +1,16 @@
+github.com/example/fullstack-calculator/backend/internal/calculator/service.go:41:	Error				100.0%
+github.com/example/fullstack-calculator/backend/internal/calculator/service.go:48:	NewService			100.0%
+github.com/example/fullstack-calculator/backend/internal/calculator/service.go:53:	Calculate			100.0%
+github.com/example/fullstack-calculator/backend/internal/calculator/service.go:116:	validationError			100.0%
+github.com/example/fullstack-calculator/backend/internal/calculator/service.go:120:	isFinite			100.0%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:25:		NewHandler			100.0%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:29:		Routes				100.0%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:37:		health				100.0%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:41:		calculate			85.7%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:84:		writeAPIError			100.0%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:88:		writeJSON			100.0%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:94:		ensureSingleJSONValue		83.3%
+github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go:105:	friendlyDecodeError		62.5%
+github.com/example/fullstack-calculator/backend/internal/httpapi/middleware.go:9:	corsMiddleware			100.0%
+github.com/example/fullstack-calculator/backend/internal/httpapi/middleware.go:27:	requestLoggingMiddleware	100.0%
+total:											(statements)			92.5%
