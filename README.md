@@ -74,7 +74,7 @@ In another terminal:
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev # or if that doesn't work : npm run dev -- --host 0.0.0.0
 ```
 
 Open `http://localhost:5173`. Vite proxies `/api` requests to the Go service at `http://localhost:8080`.

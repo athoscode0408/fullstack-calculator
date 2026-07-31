@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>calculator: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/example/fullstack-calculator/backend/internal/calculator/service.go (100.0%)</option>
+				
+				<option value="file1">github.com/example/fullstack-calculator/backend/internal/httpapi/handler.go (84.4%)</option>
+				
+				<option value="file2">github.com/example/fullstack-calculator/backend/internal/httpapi/middleware.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package calculator
+
+import (
+        "fmt"
+        "math"
+)
+
+// Operation identifies a supported calculator operation.
+type Operation string
+
+const (
+        Add        Operation = "add"
+        Subtract   Operation = "subtract"
+        Multiply   Operation = "multiply"
+        Divide     Operation = "divide"
+        Power      Operation = "power"
+        SquareRoot Operation = "square_root"
+        Percentage Operation = "percentage"
+)
+
+// Request contains the operands for a calculation. Pointer operands allow the
+// service to distinguish a missing value from a valid zero.
+type Request struct {
+        Operation Operation `json:"operation"`
+        A         *float64  `json:"a"`
+        B         *float64  `json:"b,omitempty"`
+}
+
+// Result is the successful result returned by the service.
+type Result struct {
+        Operation Operation `json:"operation"`
+        Value     float64   `json:"result"`
+}
+
+// Error is a domain error that can be translated into a stable API response.
+type Error struct {
+        Code    string `json:"code"`
+        Message string `json:"message"`
+}
+
+func (e *Error) Error() string <span class="cov8" title="1">{
+        return e.Message
+}</span>
+
+// Service performs calculator operations without depending on HTTP concerns.
+type Service struct{}
+
+func NewService() *Service <span class="cov8" title="1">{
+        return &amp;Service{}
+}</span>
+
+// Calculate validates the request and performs the selected operation.
+func (s *Service) Calculate(req Request) (Result, error) <span class="cov8" title="1">{
+        if req.Operation == "" </span><span class="cov8" title="1">{
+                return Result{}, validationError("operation is required")
+        }</span>
+        <span class="cov8" title="1">if req.A == nil </span><span class="cov8" title="1">{
+                return Result{}, validationError("operand a is required")
+        }</span>
+
+        <span class="cov8" title="1">a := *req.A
+        if !isFinite(a) </span><span class="cov8" title="1">{
+                return Result{}, validationError("operand a must be a finite number")
+        }</span>
+
+        <span class="cov8" title="1">var value float64
+
+        switch req.Operation </span>{
+        case Add, Subtract, Multiply, Divide, Power, Percentage:<span class="cov8" title="1">
+                if req.B == nil </span><span class="cov8" title="1">{
+                        return Result{}, validationError("operand b is required for this operation")
+                }</span>
+                <span class="cov8" title="1">b := *req.B
+                if !isFinite(b) </span><span class="cov8" title="1">{
+                        return Result{}, validationError("operand b must be a finite number")
+                }</span>
+
+                <span class="cov8" title="1">switch req.Operation </span>{
+                case Add:<span class="cov8" title="1">
+                        value = a + b</span>
+                case Subtract:<span class="cov8" title="1">
+                        value = a - b</span>
+                case Multiply:<span class="cov8" title="1">
+                        value = a * b</span>
+                case Divide:<span class="cov8" title="1">
+                        if b == 0 </span><span class="cov8" title="1">{
+                                return Result{}, &amp;Error{Code: "division_by_zero", Message: "cannot divide by zero"}
+                        }</span>
+                        <span class="cov8" title="1">value = a / b</span>
+                case Power:<span class="cov8" title="1">
+                        value = math.Pow(a, b)</span>
+                case Percentage:<span class="cov8" title="1">
+                        value = (a / 100) * b</span>
+                }
+
+        case SquareRoot:<span class="cov8" title="1">
+                if a &lt; 0 </span><span class="cov8" title="1">{
+                        return Result{}, &amp;Error{Code: "invalid_square_root", Message: "cannot calculate the square root of a negative number"}
+                }</span>
+                <span class="cov8" title="1">value = math.Sqrt(a)</span>
+
+        default:<span class="cov8" title="1">
+                return Result{}, &amp;Error{
+                        Code:    "unsupported_operation",
+                        Message: fmt.Sprintf("unsupported operation %q", req.Operation),
+                }</span>
+        }
+
+        <span class="cov8" title="1">if !isFinite(value) </span><span class="cov8" title="1">{
+                return Result{}, &amp;Error{Code: "result_out_of_range", Message: "calculation result is outside the supported numeric range"}
+        }</span>
+
+        <span class="cov8" title="1">return Result{Operation: req.Operation, Value: value}, nil</span>
+}
+
+func validationError(message string) *Error <span class="cov8" title="1">{
+        return &amp;Error{Code: "validation_error", Message: message}
+}</span>
+
+func isFinite(value float64) bool <span class="cov8" title="1">{
+        return !math.IsNaN(value) &amp;&amp; !math.IsInf(value, 0)
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package httpapi
+
+import (
+        "encoding/json"
+        "errors"
+        "io"
+        "log/slog"
+        "net/http"
+
+        "github.com/example/fullstack-calculator/backend/internal/calculator"
+)
+
+const maxRequestBodySize = 1 &lt;&lt; 20 // 1 MiB
+
+type calculatorService interface {
+        Calculate(calculator.Request) (calculator.Result, error)
+}
+
+// Handler owns the HTTP transport while delegating arithmetic to the domain service.
+type Handler struct {
+        calculator calculatorService
+        logger     *slog.Logger
+}
+
+func NewHandler(service calculatorService, logger *slog.Logger) *Handler <span class="cov8" title="1">{
+        return &amp;Handler{calculator: service, logger: logger}
+}</span>
+
+func (h *Handler) Routes(allowedOrigin string) http.Handler <span class="cov8" title="1">{
+        mux := http.NewServeMux()
+        mux.HandleFunc("GET /api/v1/health", h.health)
+        mux.HandleFunc("POST /api/v1/calculate", h.calculate)
+
+        return corsMiddleware(allowedOrigin, requestLoggingMiddleware(h.logger, mux))
+}</span>
+
+func (h *Handler) health(w http.ResponseWriter, _ *http.Request) <span class="cov8" title="1">{
+        writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}</span>
+
+func (h *Handler) calculate(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        r.Body = http.MaxBytesReader(w, r.Body, maxRequestBodySize)
+        defer r.Body.Close()
+
+        decoder := json.NewDecoder(r.Body)
+        decoder.DisallowUnknownFields()
+
+        var req calculator.Request
+        if err := decoder.Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                writeAPIError(w, http.StatusBadRequest, "invalid_json", friendlyDecodeError(err))
+                return
+        }</span>
+
+        <span class="cov8" title="1">if err := ensureSingleJSONValue(decoder); err != nil </span><span class="cov8" title="1">{
+                writeAPIError(w, http.StatusBadRequest, "invalid_json", "request body must contain exactly one JSON object")
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := h.calculator.Calculate(req)
+        if err != nil </span><span class="cov8" title="1">{
+                var domainErr *calculator.Error
+                if errors.As(err, &amp;domainErr) </span><span class="cov8" title="1">{
+                        writeAPIError(w, http.StatusUnprocessableEntity, domainErr.Code, domainErr.Message)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">h.logger.Error("calculator service failed", "error", err)
+                writeAPIError(w, http.StatusInternalServerError, "internal_error", "an unexpected error occurred")
+                return</span>
+        }
+
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, result)</span>
+}
+
+type errorEnvelope struct {
+        Error apiError `json:"error"`
+}
+
+type apiError struct {
+        Code    string `json:"code"`
+        Message string `json:"message"`
+}
+
+func writeAPIError(w http.ResponseWriter, status int, code, message string) <span class="cov8" title="1">{
+        writeJSON(w, status, errorEnvelope{Error: apiError{Code: code, Message: message}})
+}</span>
+
+func writeJSON(w http.ResponseWriter, status int, payload any) <span class="cov8" title="1">{
+        w.Header().Set("Content-Type", "application/json; charset=utf-8")
+        w.WriteHeader(status)
+        _ = json.NewEncoder(w).Encode(payload)
+}</span>
+
+func ensureSingleJSONValue(decoder *json.Decoder) error <span class="cov8" title="1">{
+        var extra any
+        if err := decoder.Decode(&amp;extra); err != io.EOF </span><span class="cov8" title="1">{
+                if err == nil </span><span class="cov8" title="1">{
+                        return errors.New("multiple JSON values")
+                }</span>
+                <span class="cov0" title="0">return err</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+
+func friendlyDecodeError(err error) string <span class="cov8" title="1">{
+        var syntaxErr *json.SyntaxError
+        var typeErr *json.UnmarshalTypeError
+
+        switch </span>{
+        case errors.As(err, &amp;syntaxErr):<span class="cov0" title="0">
+                return "request body contains malformed JSON"</span>
+        case errors.As(err, &amp;typeErr):<span class="cov0" title="0">
+                return "request body contains a value with an invalid type"</span>
+        case errors.Is(err, io.EOF):<span class="cov8" title="1">
+                return "request body is required"</span>
+        case err.Error() == "http: request body too large":<span class="cov0" title="0">
+                return "request body is too large"</span>
+        default:<span class="cov8" title="1">
+                return err.Error()</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package httpapi
+
+import (
+        "log/slog"
+        "net/http"
+        "time"
+)
+
+func corsMiddleware(allowedOrigin string, next http.Handler) http.Handler <span class="cov8" title="1">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                if allowedOrigin != "" </span><span class="cov8" title="1">{
+                        w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+                        w.Header().Set("Vary", "Origin")
+                        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+                        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                }</span>
+
+                <span class="cov8" title="1">if r.Method == http.MethodOptions </span><span class="cov8" title="1">{
+                        w.WriteHeader(http.StatusNoContent)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">next.ServeHTTP(w, r)</span>
+        })
+}
+
+func requestLoggingMiddleware(logger *slog.Logger, next http.Handler) http.Handler <span class="cov8" title="1">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                started := time.Now()
+                next.ServeHTTP(w, r)
+                logger.Info("request completed",
+                        "method", r.Method,
+                        "path", r.URL.Path,
+                        "duration_ms", time.Since(started).Milliseconds(),
+                )
+        }</span>)
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
