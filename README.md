@@ -1,13 +1,13 @@
-# Milestone 2 — Calculator Backend API
+# Milestone 3 — Frontend Integration
 
 This snapshot represents one development milestone of the React + Go calculator assignment.
 
 ## Included
 
-- Domain service for basic and advanced operations
-- REST endpoints with validation and structured errors
-- Go unit tests for service and HTTP handlers
-- Frontend remains a simple placeholder
+- React form for choosing operations and entering operands
+- Typed API client connected to the Go service
+- Loading/result/error-ready architecture
+- Responsive two-column input layout
 
 ## Run
 
