@@ -21,7 +21,8 @@ describe('Calculator', () => {
     await user.click(screen.getByRole('button', { name: '5' }));
     await user.click(screen.getByRole('button', { name: '=' }));
 
-    expect(await screen.findByText('12')).toBeInTheDocument();
+    const display = await screen.findByLabelText('Calculator display');
+    expect(display).toHaveTextContent('12');
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/v1/calculate',
       expect.objectContaining({
@@ -57,7 +58,8 @@ describe('Calculator', () => {
     await user.click(screen.getByRole('button', { name: '1' }));
     await user.click(screen.getByRole('button', { name: '=' }));
 
-    expect(await screen.findByText('9')).toBeInTheDocument();
+    const display = await screen.findByLabelText('Calculator display');
+    expect(display).toHaveTextContent('9');
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/v1/calculate',
       expect.objectContaining({ body: JSON.stringify({ operation: 'square_root', a: 81 }) }),
