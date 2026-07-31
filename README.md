@@ -1,12 +1,13 @@
-# Milestone 1 — Project Skeleton
+# Milestone 2 — Calculator Backend API
 
 This snapshot represents one development milestone of the React + Go calculator assignment.
 
 ## Included
 
-- React + TypeScript/Vite application skeleton
-- Go HTTP service with health endpoint
-- Initial project structure and run instructions
+- Domain service for basic and advanced operations
+- REST endpoints with validation and structured errors
+- Go unit tests for service and HTTP handlers
+- Frontend remains a simple placeholder
 
 ## Run
 
