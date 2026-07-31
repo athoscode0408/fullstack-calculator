@@ -1,13 +1,14 @@
-# Milestone 3 — Frontend Integration
+# Milestone 4 — Calculator Keypad Redesign
 
 This snapshot represents one development milestone of the React + Go calculator assignment.
 
 ## Included
 
-- React form for choosing operations and entering operands
-- Typed API client connected to the Go service
-- Loading/result/error-ready architecture
-- Responsive two-column input layout
+- Real calculator keypad replacing operand text fields
+- Operator selection, DEL, AC, decimal and sign controls
+- Advanced operations and calculation history
+- Responsive desktop/mobile calculator interface
+- Frontend unit tests for keypad interactions
 
 ## Run
 
